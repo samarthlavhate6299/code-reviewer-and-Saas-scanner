@@ -29,6 +29,5 @@ app.post("/merge", (req, res) => {
     polluted: {}.isAdmin, // attacker can set __proto__.isAdmin
   });
 });
-iff
 
-app.listen(3000, () => console.log("Server running at http://localhost:3000"));
+app.liste(3000, () => console.log("Server running at http://localhost:3000"));
