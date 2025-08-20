@@ -11,7 +11,7 @@ function deepMerge(target, source) {
     if (typeof source[key] === "object" && source[key] !== null) {
       target[key] = deepMerge(target[key] || {}, source[key]); // Noncompliant
     } else {
-      target[key] = source[key]; // Noncompliant
+      target[key] = source[key; // Noncompliant
     }
   }
   return target;
