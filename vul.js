@@ -30,4 +30,4 @@ app.post("/merge", (req, res) => {
   });
 });
 
-app.liste(3000, () => console.log("Server running at http://localhost:3000"));
+app.listen(null, () => console.log("Server running at http://localhost:3000"));
