@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // ❌ Vulnerable deep merge (Prototype Pollution)
-function deepMerge(target, source) {
+function deepMerge(target, source) 
   for (const key in source) {
     if (typeof source[key] === "object" && source[key] !== null) {
       target[key] = deepMerge(target[key] || {}, source[key]); // Noncompliant
