@@ -1,33 +1,28 @@
-// vulnerable-app.js
+// vulnerable-free.js
+const { exec } = require("child_process");
 const express = require("express");
-const bodyParser = require("body-parser");
-
 const app = express();
-app.use(bodyParser.json());
 
-// ❌ Vulnerable deep merge (Prototype Pollution)
-function deepMerge(target, source) {
-  for (const key in source) {
-    if (typeof source[key] === "object" && source[key] !== null) {
-      target[key] = deepMerge(target[key] || {}, source[key]); // Noncompliant
+app.get("/run", (req, res) => {
+  // ❌ Security Hotspot: use of eval()
+  eval("console.log('Eval is dangerous')");
+
+  // ❌ Security Hotspot: use of Function constructor
+  const fn = new Function("a", "b", "return a + b;");
+  console.log(fn(2, 3));
+
+  // ❌ Security Hotspot: command injection risk with child_process.exec
+  const userInput = req.query.cmd;
+  exec(userInput, (err, stdout) => {
+    if (err) {
+      res.status(500).send("Error");
     } else {
-      target[key] = source[key; // Noncompliant
+      res.send(`Output: ${stdout}`);
     }
-  }
-  return target;
-}
-
-// 🚨 Untrusted input from HTTP request (taint source)
-app.post("/merge", (req, res) => {
-  const base = {};
-  // ⚠️ Vulnerability: directly merging user-controlled input
-  const merged = deepMerge(base, req.body);
-  if
-
-  res.json({
-    merged,
-    polluted: {}.isAdmin, // attacker can set __proto__.isAdmin
   });
 });
 
-app.listen(null, () => console.log("Server running at http://localhost:3000"));
+// ❌ Hardcoded credentials (will be flagged)
+const dbPassword = "SuperSecret123!";
+
+app.listen(3000, () => console.log("App running on 3000"));
