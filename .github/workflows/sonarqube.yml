@@ -53,6 +53,4 @@ jobs:
           export PATH="/tmp/sonar-scanner-4.7.0.2747/bin:$PATH"
           
           sonar-scanner \
-            -Dsonar.projectKey=samar007_testing-repo \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.projectKey=samar007_testing-repo 
