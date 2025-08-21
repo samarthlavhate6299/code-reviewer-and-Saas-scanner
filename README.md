@@ -1,4 +1,4 @@
-before starting we have to set up oath connection between git and n8n
+before starting we have to set up oauth connection between git and n8n with the help of github pr trigger in n8n 
 
 
 video link 
