@@ -1,0 +1,350 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "owner": {
+          "__rl": true,
+          "value": "samarthlavhate6299",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "testing-repo",
+          "mode": "name"
+        },
+        "events": [
+          "pull_request"
+        ],
+        "options": {}
+      },
+      "id": "8f2522bb-76c0-47c6-b0ee-867a1eba93e1",
+      "name": "GitHub PR Trigger",
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [
+        144,
+        1200
+      ],
+      "webhookId": "c64fd604-d3b3-4535-9ee9-1b0e3f41095a",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "5jz8mlKPPFiwjuyo",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{$json.body.sender.login}}/{{$json.body.repository.name}}/pulls/{{$json.body.number}}/files",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        1104
+      ],
+      "id": "a733b570-2c8b-45a3-b71d-d91581f3868c",
+      "name": "Get Changes"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_message }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        1200
+      ],
+      "id": "a8e3758d-8499-482c-8606-e11e3bb3c88f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        1424
+      ],
+      "id": "40b6e7fd-74b0-4e3a-9acd-e3832a32606a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YQtX0hHR46zhVQkk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "review",
+        "owner": {
+          "__rl": true,
+          "value": "samarthlavhate6299",
+          "mode": "list",
+          "cachedResultName": "samarthlavhate6299",
+          "cachedResultUrl": "https://github.com/samarthlavhate6299"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "testing-repo",
+          "mode": "list",
+          "cachedResultName": "testing-repo",
+          "cachedResultUrl": "https://github.com/samarthlavhate6299/testing-repo"
+        },
+        "pullRequestNumber": "={{ $('GitHub PR Trigger').first().json.body.number }}",
+        "event": "comment",
+        "body": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        1200
+      ],
+      "id": "9165f612-57fe-419c-bb8e-8ad3a2ae1359",
+      "name": "Create a review",
+      "webhookId": "d63ec495-0717-4506-b937-ecf04c4b9646",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "5jz8mlKPPFiwjuyo",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "samarthlavhate6299",
+          "mode": "list",
+          "cachedResultName": "samarthlavhate6299",
+          "cachedResultUrl": "https://github.com/samarthlavhate6299"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "testing-repo",
+          "mode": "list",
+          "cachedResultName": "testing-repo",
+          "cachedResultUrl": "https://github.com/samarthlavhate6299/testing-repo"
+        },
+        "issueNumber": "={{ $('GitHub PR Trigger').first().json.body.number }}",
+        "editFields": {
+          "labels": [
+            {
+              "label": "ReviewedByAI"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1840,
+        1200
+      ],
+      "id": "9213959a-3c40-46a9-a1e1-9d04d0098edd",
+      "name": "Edit an issue",
+      "webhookId": "3206cb4f-f821-412e-95b3-3c692b34e76b",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "5jz8mlKPPFiwjuyo",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://sonarcloud.io/api/hotspots/search?projectKey=samarthlavhate6299_testing-repo&pullRequest=9",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        1296
+      ],
+      "id": "a5719aad-4a82-4049-867f-454558e8eb1c",
+      "name": "HTTP Request",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mJ6ObWgpEt5nRi7E",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        368,
+        1200
+      ],
+      "id": "609ecc5c-0b6d-4e6c-94b2-6a501b5481b9",
+      "name": "Wait",
+      "webhookId": "40b61c77-f7c4-497c-b6c3-5b66e74fbf4c"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        816,
+        1200
+      ],
+      "id": "e857efb1-c2e2-4b49-a294-aa5dd960a0e4",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = $input.all().map(item => item.json);\nconst sast_data =$input.first().json.hotspots\nconst sastSection = sast_data\n  ? `### 🔒 SAST Findings\\n\\n\\`\\`\\`json\\n${JSON.stringify(sast_data, null, 2)}\\n\\`\\`\\`\\n`\n  : \"### 🔒 SAST Findings\\n\\n_Aucun problème détecté._\\n\";\nlet diffs = '';\nfor (const file of files) {\n  diffs += `### Fichier : ${file.filename}\\n\\n`;\n\n  if (file.patch) {\n    // IMPORTANT : On remplace tous les triple backticks par simple (ou échappement)\n    const safePatch = file.patch.replace(/```/g, \"''\");\n\n    diffs += \"```diff\\n\";\n    diffs += safePatch;\n    diffs += \"\\n```\\n\";\n  } else {\n    diffs += \"_Pas de patch disponible (probablement fichier binaire)._\";\n  }\n\n  diffs += \"\\n---\\n\\n\";\n}\n\nconst userMessage = `\nYou are a senior JavaScript and GenAI developer with expertise in security.\nReview the following code changes and SAST report:\n\n---\ncode changes\n${diffs}\n---\n---\nsast report\n${sastSection}\n\nYour mission:\n\n- Review the proposed code changes file by file and by significant modification.\n\n- Generate inline comments on the relevant lines of code.\n\n- Ignore files without patches.\n\n- Do not repeat the code snippet or the filename.\n\n- Write the comments directly, without introducing the context.\n\n- Generate seperate inline comments for sast issue\n`;\n\nreturn [\n  {\n    json: {\n      user_message: userMessage.trim()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        1200
+      ],
+      "id": "7164b381-c77e-4ba4-87e4-404d73ee0550",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GitHub PR Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Changes": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a review": {
+      "main": [
+        [
+          {
+            "node": "Edit an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Changes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "29b1a9ad-494a-41ce-9409-0700fb1f2c5d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "245583e8f81f8756fb3737d4749a8ecab47ea8481581a451b1cbbb35e7a8fbb9"
+  },
+  "id": "zSlZGoKae32BaY7K",
+  "tags": []
+}
